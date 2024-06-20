@@ -4,58 +4,45 @@ import 'package:flutter/material.dart';
 class DifficultySelector extends StatelessWidget {
   DifficultySelector({
     required this.selectedDifficulty,
-    required this.decreaseDifficulty,
-    required this.increaseDifficulty,
+    required this.toggleDifficulty,
   });
   final GameDifficulty selectedDifficulty;
-  final void Function() decreaseDifficulty;
-  final void Function() increaseDifficulty;
+  final void Function() toggleDifficulty;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 480,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Difficulty: ${selectedDifficulty.name}",
-            ),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 32),
-            child: Center(
-              child: SizedBox(
-                width: 128,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    (selectedDifficulty.index > 0)
-                        ? TextButton(
-                            onPressed: decreaseDifficulty,
-                            child: const Text("<"),
-                          )
-                        : const SizedBox.shrink(),
-                    (selectedDifficulty.index <
-                            GameDifficulty.values.length - 1)
-                        ? TextButton(
-                            onPressed: increaseDifficulty,
-                            child: const Text(">"),
-                          )
-                        : const SizedBox.shrink(),
-                  ],
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Stack(
+          clipBehavior: Clip.none,
+          children: <Widget>[
+            Positioned(
+              bottom: -8,
+              child: Transform.rotate(
+                angle: -0.04,
+                child: Text(
+                  "Press to change",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
                 ),
               ),
             ),
+            TextButton(
+              onPressed: toggleDifficulty,
+              child: const Text("Difficulty"),
+            ),
+          ],
+        ),
+        SizedBox(
+          width: 248,
+          child: Text(
+            ": ${selectedDifficulty.name}",
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

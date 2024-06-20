@@ -1,11 +1,14 @@
 import 'package:flame_pong/enums/difficulty.dart';
+import 'package:flame_pong/game/pong_game.dart';
 import 'package:flame_pong/start_screen/difficulty_selector.dart';
 import 'package:flame_pong/start_screen/title.dart';
 import 'package:flutter/material.dart';
 
 class StartScreen extends StatefulWidget {
-  const StartScreen();
+  const StartScreen(this.game);
+  final PongGame game;
 
+  static const String overlayName = "startScreen";
   @override
   State<StartScreen> createState() => _StartScreenState();
 }
@@ -16,19 +19,30 @@ class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.sizeOf(context).height / 10),
+      padding: EdgeInsets.symmetric(
+        vertical: MediaQuery.sizeOf(context).height / 10,
+      ),
       child: Align(
         alignment: Alignment.topCenter,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             const GameTitle(),
-             SizedBox.square(
-              dimension: MediaQuery.sizeOf(context).height/10,
+            SizedBox.square(
+              dimension: MediaQuery.sizeOf(context).height / 10,
+            ),
+            TextButton(
+              onPressed: () {
+                widget.game.overlays.remove(StartScreen.overlayName);
+                widget.game.start(
+                  difficulty: difficulty,
+                );
+              },
+              child: const Text("Start Game"),
             ),
             DifficultySelector(
               selectedDifficulty: difficulty,
-              decreaseDifficulty: decreaseDifficulty,
-              increaseDifficulty: increaseDifficulty,
+              toggleDifficulty: toggleDifficulty,
             ),
           ],
         ),
@@ -36,18 +50,14 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 
-  void decreaseDifficulty() {
-    if (difficulty.index > 0) {
-      setState(() {
-        difficulty = GameDifficulty.values[difficulty.index - 1];
-      });
-    }
-  }
-
-  void increaseDifficulty() {
+  void toggleDifficulty() {
     if (difficulty.index < GameDifficulty.values.length - 1) {
       setState(() {
         difficulty = GameDifficulty.values[difficulty.index + 1];
+      });
+    } else {
+      setState(() {
+        difficulty = GameDifficulty.values[0];
       });
     }
   }

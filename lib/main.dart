@@ -1,5 +1,5 @@
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flame_pong/game/pong_game.dart';
 import 'package:flame_pong/start_screen/start_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -48,11 +48,11 @@ void main() {
         child: SafeArea(
           child: GameWidget<PongGame>(
             game: PongGame(),
-            initialActiveOverlays: <String>["startScreen"],
+            initialActiveOverlays: <String>[StartScreen.overlayName],
             // ignore: always_specify_types
             overlayBuilderMap: {
               // "test": (_, __) => Text("hello world"),
-              "startScreen": (_, __) => const StartScreen(),
+              StartScreen.overlayName: (_, PongGame game) => StartScreen(game),
             },
           ),
         ),
@@ -60,5 +60,3 @@ void main() {
     ),
   );
 }
-
-class PongGame extends FlameGame<World> {}
