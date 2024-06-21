@@ -1,18 +1,29 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame_pong/enums/difficulty.dart';
+import 'package:flame_pong/enums/enums.dart';
 import 'package:flame_pong/game/ball.dart';
 import 'package:flame_pong/game/goal_tracker.dart';
+import 'package:flame_pong/game/score.dart';
 import 'package:flame_pong/game/slider.dart';
 
-// ignore: always_specify_types
-class PongGame extends FlameGame<World> with HasCollisionDetection {
+class PongGame extends FlameGame<World>
+    with
+        // ignore: always_specify_types
+        HasCollisionDetection,
+        PanDetector {
   //TODO: Add pan detector for mobiles.
 
   GameDifficulty difficulty = GameDifficulty.medium;
-  bool isPlaying = false;
+  GameStatus gameStatus = GameStatus.waiting;
+  EnemyType enemyType = EnemyType.player;
+
+  late PlayerPlatform _topPlayer;
+  late PlayerPlatform _bottomPlayer;
+  int topPlayerScore = 0;
+  int bottomPlayerScore = 0;
 
   @override
   FutureOr<void> onLoad() async {
@@ -24,11 +35,39 @@ class PongGame extends FlameGame<World> with HasCollisionDetection {
     required GameDifficulty difficulty,
   }) {
     this.difficulty = difficulty;
-    isPlaying = true;
+    gameStatus = GameStatus.playing;
+    topPlayerScore = 0;
+    bottomPlayerScore = 0;
     add(Ball());
     add(GoalTracker.top());
     add(GoalTracker(isBottom: true));
-    add(Slider.top());
-    add(Slider(isBottom: true));
+
+    _topPlayer = PlayerPlatform.top();
+    _bottomPlayer = PlayerPlatform(isBottom: true);
+    add(_topPlayer);
+    add(_bottomPlayer);
+    add(Score(isTop: true));
+    add(
+      Score(
+        isTop: false,
+      ),
+    );
+  }
+
+  @override
+  void onPanUpdate(DragUpdateInfo info) {
+    super.onPanUpdate(info);
+
+    if (gameStatus == GameStatus.playing) {
+      if (enemyType == EnemyType.ai) {
+        _bottomPlayer.position.x += info.delta.global.x;
+      } else {
+        if (info.eventPosition.global.y > size.y / 2) {
+          _bottomPlayer.position.x += info.delta.global.x;
+        } else {
+          _topPlayer.position.x += info.delta.global.x;
+        }
+      }
+    }
   }
 }
