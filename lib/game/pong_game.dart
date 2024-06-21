@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flame_pong/enums/difficulty.dart';
 import 'package:flame_pong/game/ball.dart';
 import 'package:flame_pong/game/goal_tracker.dart';
+import 'package:flame_pong/game/slider.dart';
 
 // ignore: always_specify_types
 class PongGame extends FlameGame<World> with HasCollisionDetection {
@@ -27,5 +28,7 @@ class PongGame extends FlameGame<World> with HasCollisionDetection {
     add(Ball());
     add(GoalTracker.top());
     add(GoalTracker(isBottom: true));
+    add(Slider.top());
+    add(Slider(isBottom: true));
   }
 }
