@@ -2,15 +2,16 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_pong/enums/difficulty.dart';
+import 'package:flame_pong/enums/enums.dart';
 import 'package:flame_pong/game/goal_tracker.dart';
 import 'package:flame_pong/game/pong_game.dart';
+import 'package:flame_pong/game/slider.dart';
 import 'package:flutter/material.dart';
 
 class Ball extends PositionComponent
     with HasGameReference<PongGame>, CollisionCallbacks {
   late final Vector2 velocity;
-  late final bool _isPlaying;
+  late final GameStatus _isPlaying;
   final Paint _paint = Paint()..color = Colors.white;
 
   Ball()
@@ -30,7 +31,7 @@ class Ball extends PositionComponent
     await super.onLoad();
     add(RectangleHitbox());
 
-    _isPlaying = game.isPlaying;
+    _isPlaying = game.gameStatus;
 
     switch (game.difficulty) {
       case GameDifficulty.medium:
@@ -48,11 +49,13 @@ class Ball extends PositionComponent
 
   @override
   void update(double dt) {
-    if (_isPlaying != game.isPlaying) {
+    if (_isPlaying != game.gameStatus) {
       removeFromParent();
     }
-    if (position.x < 0 || position.x > game.size.x) {
-      velocity.x = -velocity.x;
+    if (position.x < 0) {
+      velocity.x = velocity.x.abs();
+    } else if (position.x > game.size.x) {
+      velocity.x = -velocity.x.abs();
     }
 
     if (position.y < 0 || position.y > game.size.y) {
@@ -70,12 +73,14 @@ class Ball extends PositionComponent
   ) {
     if (other is GoalTracker) {
       if (other.isBottom) {
-        print("player got goaled");
+        game.bottomPlayerScore++;
       } else {
-        print("enemy got goaled");
+        game.topPlayerScore++;
       }
 
       positionReset();
+    } else if (other is PlayerPlatform) {
+      velocity.y = -velocity.y;
     }
     super.onCollisionStart(intersectionPoints, other);
   }
