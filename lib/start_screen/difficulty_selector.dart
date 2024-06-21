@@ -1,4 +1,4 @@
-import 'package:flame_pong/enums/difficulty.dart';
+import 'package:flame_pong/enums/enums.dart';
 import 'package:flutter/material.dart';
 
 class DifficultySelector extends StatelessWidget {

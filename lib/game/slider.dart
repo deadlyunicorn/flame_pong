@@ -1,19 +1,21 @@
 import 'dart:async';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_pong/enums/enums.dart';
 import 'package:flame_pong/game/pong_game.dart';
 import 'package:flutter/material.dart';
 
-class Slider extends PositionComponent with HasGameReference<PongGame> {
+class PlayerPlatform extends PositionComponent with HasGameReference<PongGame> {
   final Paint _paint = Paint()..color = Colors.white;
   final int _posY = 64;
   final bool isBottom;
 
-  Slider({
+  PlayerPlatform({
     required this.isBottom,
   }) : super(size: Vector2(64, 8), anchor: Anchor.center);
 
-  Slider.top() : this(isBottom: false);
+  PlayerPlatform.top() : this(isBottom: false);
 
   @override
   void render(Canvas canvas) {
@@ -30,11 +32,16 @@ class Slider extends PositionComponent with HasGameReference<PongGame> {
       correctPositionY();
     }
     position.x = game.size.x / 2;
+    add(
+      RectangleHitbox(
+        collisionType: CollisionType.passive,
+      ),
+    );
   }
 
   @override
   void update(double dt) {
-    if (!game.isPlaying) {
+    if (game.gameStatus == GameStatus.waiting) {
       removeFromParent();
     }
     super.update(dt);

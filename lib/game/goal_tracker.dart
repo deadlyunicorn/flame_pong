@@ -43,10 +43,11 @@ class GoalTracker extends PositionComponent with HasGameReference<PongGame> {
     if (isBottom) {
       position = Vector2(0, game.size.y - 32);
     }
-    if (game.isPlaying == false) {
+    if (game.gameStatus == false) {
       removeFromParent();
     } else {
       size = Vector2(game.size.x, 32);
     }
   }
+
 }

@@ -1,4 +1,4 @@
-import 'package:flame_pong/enums/difficulty.dart';
+import 'package:flame_pong/enums/enums.dart';
 import 'package:flame_pong/game/pong_game.dart';
 import 'package:flame_pong/start_screen/difficulty_selector.dart';
 import 'package:flame_pong/start_screen/title.dart';
