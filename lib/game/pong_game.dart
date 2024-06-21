@@ -4,22 +4,28 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame_pong/enums/difficulty.dart';
 import 'package:flame_pong/game/ball.dart';
+import 'package:flame_pong/game/goal_tracker.dart';
 
-class PongGame extends FlameGame<World> {
+// ignore: always_specify_types
+class PongGame extends FlameGame<World> with HasCollisionDetection {
+  //TODO: Add pan detector for mobiles.
+
   GameDifficulty difficulty = GameDifficulty.medium;
-  late final Ball _ball;
+  bool isPlaying = false;
 
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
-    _ball = Ball()..position = Vector2(size.x / 2, size.y / 2);
-
-    add(_ball);
+    add(Ball());
   }
 
   void start({
     required GameDifficulty difficulty,
   }) {
     this.difficulty = difficulty;
+    isPlaying = true;
+    add(Ball());
+    add(GoalTracker.top());
+    add(GoalTracker(isBottom: true));
   }
 }
